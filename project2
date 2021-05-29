@@ -1,17 +1,17 @@
-#main code
+#main code   (create using project2.py)
 import requests
 from bs4 import BeautifulSoup
 import pandas
 import argparse
 import connect
 
-parser = argparse.Argumentparser()
-parser.add_argument("--page_num_MAX", help="Enter the munber of pages to parse", type=int)
+parser = argparse.ArgumentParser()
+parser.add_argument("--page_num_max", help="Enter the munber of pages to parse", type=int)
 parser.add_argument("--dbname", help="Enter the name of db", type=str)
 args = parser.parse_args()
 
 oyo_url = "https://www.oyorooms.com/hotels-in-bangalore/?page="
-page_num_MAX = 3
+page_num_MAX = args.page_num_max
 scraped_info_list = []
 connect.connect(args.dbname)
 
@@ -54,7 +54,7 @@ dataFrame.to_csv("Oyo.csv")
 connect.get_hotel_info(args.dbname)
 
 
-# connecting code
+# connecting code  (save using connect.py)
 import sqlite3
 
 def connect(dbname):
@@ -69,7 +69,7 @@ def connect(dbname):
 def insert_into_table(dbname, values):
     conn = sqlite3.connect(dbname)
     print("Inserted into table:" + str(values))
-    insert_sql = "INSRET INTO OYO_HOTELS(NAME, PRICE, AMENITIES, RATING) VALUES (?, ?, ?, ?)"
+    insert_sql = "INSERT INTO OYO_HOTELS(NAME, ADDRESS, PRICE, AMENITIES, RATING) VALUES (?, ?, ?, ?, ?)"
 
     conn.execute(insert_sql, values)
 
@@ -78,3 +78,14 @@ def insert_into_table(dbname, values):
 
 def get_hotel_info(dbname):
     conn = sqlite3.connect(dbname)
+
+    cur = conn.cursor()
+
+    cur.execute("SELECT * FROM OYO_HOTELS)")
+
+    table_data = cur.fetchall()
+
+    for record in table_data:
+        print(record)
+
+    conn.close()
